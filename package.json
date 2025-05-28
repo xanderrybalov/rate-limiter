@@ -1,0 +1,21 @@
+{
+  "name": "rate-limiter",
+  "version": "1.0.0",
+  "description": "Very small rate-limiter for node.js",
+  "main": "dist/main.js",
+  "types": "dist/main.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/main.js",
+    "dev": "ts-node src/main.ts"
+  },
+  "keywords": [],
+  "author": "Xander Rybalov",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^22.15.23",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.8.3"
+  }
+}
