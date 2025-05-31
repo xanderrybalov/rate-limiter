@@ -1,9 +1,16 @@
 import http from "http";
-import { createRateLimiter } from "./limiter";
+import dotenv from "dotenv";
+import { createFixedWindowLimiter } from "./createFixedWindowLimiter";
+import { RateLimitRequest } from "./types";
 
-const limiter = createRateLimiter({
+dotenv.config();
+
+const windowMs = parseInt(process.env.RATE_LIMIT_WINDOW_MS || "60000", 10);
+const max = parseInt(process.env.RATE_LIMIT_MAX || "5", 10);
+
+const limiter = createFixedWindowLimiter({
   limits: {
-    "/api/login": { windowMs: 60_000, max: 5 }
+    "/api/login": { windowMs, max }
   }
 });
 
@@ -14,7 +21,7 @@ const server = http.createServer((req, res) => {
 
   if (url === "/favicon.ico") return res.end();
 
-  const allowed = limiter({ ip, path: url });
+    const allowed = limiter({ ip, path: url } as RateLimitRequest);
 
   if (!allowed) {
     res.writeHead(429, { "Content-Type": "application/json" });
@@ -22,9 +29,10 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+
   if (url === "/api/login" && method === "GET") {
     res.writeHead(200, { "Content-Type": "application/json" });
-    res.end(JSON.stringify({ message: "OK" }));
+    res.end(JSON.stringify({ message: "OK, I'm a server" }));
   } else {
     res.writeHead(404);
     res.end("Not Found");
